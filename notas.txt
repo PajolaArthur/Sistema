@@ -1,0 +1,13 @@
+python -m venv venv
+.\venv\Scripts\activate
+django-admin startproject core .
+python manage.py runserver
+python manage.py startapp compras
+python manage.py makemigrations
+python manage.py migrate
+
+python manage.py createsuperuser
+
+
+
+git init

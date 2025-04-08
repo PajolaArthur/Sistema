@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+    <h1>Editar Solicitação de Compra</h1>    
+    <form method="post" class="form">
+
+        {% csrf_token %}
+        {{form.as_p}}
+        <button type="submit" class="btn btn-primary">Salvar alterações</button>
+
+    </form>
+    <br>
+    <a href="{% url 'compra-list' %}" class="btn btn-warning">Retornar</a>
+
+{% endblock conteudo%}

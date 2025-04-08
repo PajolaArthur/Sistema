@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+    <h1>Confirma Exclusão</h1>
+    <p>Tem certeza que deseja excluir essa solicitação de compra de {{object.descricao_produto}} - {{object.codigo_produto}}?</p>
+
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Excluir</button>
+    </form>
+    <br>
+    <a href="{% url 'compra-list' %}" class="btn btn-warning">Retornar</a>
+
+{% endblock conteudo%}
