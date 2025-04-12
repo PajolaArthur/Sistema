@@ -4,7 +4,15 @@
 
 <center><h1>Solicitações de Compras</h1></center>
 <hr>
-<form method="get" action="." class="row g-3 align-items-end">
+<div class="row justify-content-end mb-3">
+  <div class="col-auto">
+    <a href="{% url 'compra-create' %}" class="btn btn-outline-primary">
+      ➕ Nova Compra
+    </a>
+  </div>
+</div>
+<hr>
+<form method="get" action="{% url 'compra-list' %}" class="row g-3 align-items-end">
 
     <!-- Pesquisa Geral -->
     <div class="col-md-3">
@@ -31,7 +39,22 @@
         value="{{ request.GET.codigoproduto }}"
       >
     </div>
-  
+
+   <br>
+    
+    <!-- Situação -->
+    <div class="col-md-3">
+      <label for="situacao" class="form-label">Situações</label>
+      <select name="situacao" id="situacao" class="form-select">
+        <option value="">Todas as Situações</option>
+        {% for key, label in compra.COMPRA_STATUS %}
+          <option value="{{ key }}" {% if request.GET.situacao == key %}selected{% endif %}>
+            {{ label }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+
     <!-- Fabricante -->
     <div class="col-md-3">
         <label for="fabricante" class="form-label">Fabricante</label>
@@ -102,24 +125,34 @@
         <th scope="col">Produto</th>
         <th scope="col">Código Produto</th>
         <th scope="col">Código Fornecedor</th>
-        <th scope="col">Criado</th>
         <th scope="col">Fabricante</th>
         <th scope="col">Categoria</th>
-        <th scope="col">Situação</th>
+        <th scope="col">Criado</th>
         <th scope="col">Dias</th>
+        <th scope="col">Usuario</th>
+        <th scope="col">Situação</th>
         <th scope="col">Ações</th>
     </tr>
     </thead>
     <tbody>
-        {% for compra in compras %}
+        {% for compra in compras%}
             <tr>
                 <th>{{compra.pk }}</th>
                 <td>{{ compra.descricao_produto }}</td>
                 <td>{{ compra.codigo_produto }}</td>
-                <td>{{ compra.codigo_fornecedor }}</td>
-                <td>{{ compra.criado_em|date:"d/m/Y" }}</td>
+                <td>
+                  {% if not compra.codigo_fornecedor %}
+                   --------
+                  {% else %}
+                    {{ compra.codigo_fornecedor }}
+                  {% endif %}
+                </td>
+               
                 <td>{{ compra.get_fabricante_produto_display }}</td>
                 <td>{{ compra.get_categoria_produto_display }}</td>
+                <td>{{ compra.criado_em|date:"d/m/Y" }}</td>
+                <td>Criado há {{ compra.dias_desde_criacao }}   {{ compra.dias_desde_criacao|pluralize:"dia,dias" }}</td>
+                <td>{{ compra.criado_por.username }}</td>
                 <td>
                     {% if compra.situacao == 'P' %}
                         <span class="badge bg-primary" title="Pendente">Pendente</span>
@@ -131,7 +164,7 @@
                         <span class="badge bg-light text-dark" title="Concluído">Concluído</span>
                     {% endif %}
                 </td>
-                <td>Criado há {{ compra.dias_desde_criacao }}   {{ compra.dias_desde_criacao|pluralize:"dia,dias" }}</td>
+               
                 <td>
                     <a 
   href="{% url 'compra-aprovado' pk=compra.pk %}" 
@@ -149,7 +182,7 @@
   ❌
 </a>
                     <a href="{% url 'compra-edit' pk=compra.pk %}" class=" btn btn-primary btn-sm">Editar<a/>
-                    <a href="{% url 'compra-delete' pk=compra.pk %}" class=" btn btn-danger btn-sm">Excluir<a/>
+                    <a href="{% url 'excluir-compra' pk=compra.pk %}" class=" btn btn-danger btn-sm">Excluir<a/>
                     </td>
                 </tr>
     {% endfor %}

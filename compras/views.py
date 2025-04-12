@@ -12,17 +12,22 @@ from django.utils.decorators import method_decorator
 from django.db.models import Q
 import datetime
 from django.shortcuts import get_object_or_404, redirect
-
+from django.utils import timezone
+from django.views.generic.edit import CreateView
+from django.views.generic import TemplateView
 
 #def compra_list(request):
 #    compras = Compra.objects.all()
 #    return render(request,'compra_list.html',{'compras':compras})
 
+class Home(TemplateView):
+    template_name = 'home.html'
+
 @method_decorator(login_required, name="dispatch")
 class CompraListView(ListView):
     model = Compra
     template_name = 'compra_list.html'
-    #paginate_by = 10
+    paginate_by = 10
     context_object_name = 'compras'
 
     def get_queryset(self):
@@ -30,6 +35,7 @@ class CompraListView(ListView):
 
         compras = self.request.GET.get('q', '').strip()
         codigoproduto = self.request.GET.get('codigoproduto', '').strip()
+        situacao = self.request.GET.get('situacao', '')
         fabricante = self.request.GET.get('fabricante', '').strip()
         categoria = self.request.GET.get('categoria', '')
         data_inicial = self.request.GET.get('data_inicial')
@@ -47,12 +53,11 @@ class CompraListView(ListView):
                 Q(situacao__icontains=compras)
             )
 
-        # Filtro por nome do fabricante
-        #if fabricante:
-            #filtros &= Q(fabricante_produto__icontains=fabricante)
-
         if codigoproduto:
             filtros &= Q(codigo_produto__icontains=codigoproduto)
+
+        if situacao:
+            queryset = queryset.filter(situacao=situacao)
 
         if categoria:
             queryset = queryset.filter(categoria_produto=categoria)
@@ -72,24 +77,17 @@ class CompraListView(ListView):
             pass
 
         return queryset.filter(filtros)
-
+    
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        
+        context['status_choices'] = Compra.COMPRA_STATUS
         context['categoria_selecionada'] = self.request.GET.get('categoria', '')
-        context['compra'] = Compra  # Passa o model para acessar CATEGORIAS no template
-        return context
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
         context['fabricante_selecionado'] = self.request.GET.get('fabricante', '')
-        context['compra'] = Compra  # Passa o model para acessar FABRICANTES no template
+        context['compra'] = Compra  # Usado para acessar constantes como CATEGORIAS e FABRICANTES no template
+        
         return context
     
-    
-    
-
-
-
 class CompraUpdateView(UpdateView):
     model = Compra
     form_class = CompraForm
@@ -109,8 +107,8 @@ class CompraCreateView(CreateView):
     form_class = CompraFormCreate
     template_name = 'compra_create.html'
     success_url = reverse_lazy('compra-list')
-    def form_valid(self,form):
-        #adicionar lógica no que o usuário escreveu no formulário
+    def form_valid(self, form):
+        form.instance.criado_por = self.request.user
         return super().form_valid(form)
     
 def aprovar_compra(request, pk):
@@ -124,3 +122,9 @@ def recusar_compra(request, pk):
     compra.situacao = 'R'  # 'R' de Recusado
     compra.save()
     return redirect('compra-list')  # redireciona de volta para a listagem
+
+def excluir_compra(request, pk):
+    compra = get_object_or_404(Compra, pk=pk)
+    compra.excluido_em = timezone.now()
+    compra.save()
+    return redirect('compra-list')

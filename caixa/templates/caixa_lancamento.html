@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+
+{% block conteudo %}
+<div class="container mt-5">
+  <div class="row mb-4">
+    <div class="col text-center">
+      <h2>Lançamento de Movimento</h2>
+    </div>
+  </div>
+  
+  <hr class="my-4">
+
+  <form method="POST" action="">
+    {% csrf_token %}
+
+    <div class="mb-3">
+      <label for="observacao" class="form-label">Observação</label>
+      <input 
+        type="text" 
+        name="observacao" 
+        id="observacao" 
+        class="form-control form-control-sm w-50"
+        maxlength="60" 
+        oninput="atualizarContador()"
+        required>
+      <div class="form-text">
+        <span id="contador">0</span>/60 caracteres
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label d-block">Tipo de Movimento</label>
+      <div class="btn-group" role="group" aria-label="Tipo">
+        <input type="radio" class="btn-check" name="tipo" id="suprimento" value="S" data-label="Suprimento" autocomplete="off" required>
+        <label class="btn btn-outline-success" for="suprimento">Suprimento</label>
+        <input type="radio" class="btn-check" name="tipo" id="sangria" value="E" data-label="Sangria" autocomplete="off">
+        <label class="btn btn-outline-danger" for="sangria">Sangria</label>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="forma" class="form-label">Forma de Pagamento</label>
+      <select name="forma" id="forma" class="form-select form-select-sm w-50" required>
+        <option value="" selected disabled>Selecione a forma</option>
+        {% for codigo, descricao in formas %}
+          <option value="{{ codigo }}">{{ descricao }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="mb-4">
+      <label for="valor" class="form-label">Valor (R$)</label>
+      <input type="text" name="valor" id="valor" class="form-control form-control-sm w-50" placeholder="Ex: 1.234,56" required>
+    </div>
+
+    <hr class="my-4">
+
+    <div class="container">
+      <div class="d-flex gap-3 justify-content-start mt-4">
+        <button type="button" class="btn btn-primary" onclick="preencherConfirmacao()" data-bs-toggle="modal" data-bs-target="#confirmarModal">
+          Confirmar Lançamento
+        </button>
+        <a href="{% url 'caixa' %}" class="btn btn-secondary">Voltar</a>
+      </div>
+    </div>
+
+    <!-- Modal de Confirmação -->
+    <div class="modal fade" id="confirmarModal" tabindex="-1" aria-labelledby="confirmarModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="confirmarModalLabel">Confirmar Lançamento</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+          </div>
+          <div class="modal-body">
+            <p><strong>Tipo:</strong> <span id="confirmTipo"></span></p>
+            <p><strong>Forma de Pagamento:</strong> <span id="confirmForma"></span></p>
+            <p><strong>Valor:</strong> <span id="confirmValor"></span></p>
+            <p><strong>Observação:</strong> <span id="confirmObs"></span></p>
+          </div>
+
+          <hr class="my-4">
+          
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Confirmar</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </form>
+</div>
+
+<script>
+// Máscara simples para valor monetário com vírgula
+document.getElementById('valor').addEventListener('input', function (e) {
+  let v = e.target.value.replace(/\D/g, '');
+  v = (v / 100).toFixed(2) + '';
+  v = v.replace('.', ',');
+  v = v.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
+  e.target.value = v;
+});
+
+function atualizarContador() {
+  const input = document.getElementById('observacao');
+  const contador = document.getElementById('contador');
+  contador.textContent = input.value.length;
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  atualizarContador();
+});
+
+function preencherConfirmacao() {
+  const tipo = document.querySelector('input[name="tipo"]:checked')?.dataset.label || '';
+  const forma = document.getElementById("forma").selectedOptions[0]?.text || '';
+  const valor = document.getElementById("valor").value;
+  const obs = document.getElementById("observacao").value;
+
+  document.getElementById("confirmTipo").textContent = tipo;
+  document.getElementById("confirmForma").textContent = forma;
+  document.getElementById("confirmValor").textContent = 'R$ ' + valor;
+  document.getElementById("confirmObs").textContent = obs;
+}
+</script>
+{% endblock %}

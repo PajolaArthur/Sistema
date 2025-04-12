@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block conteudo %}
+<div class="container mt-5">
+  <h2>Abrir Caixa</h2>
+
+  <p>Usuário: <strong>{{ request.user.username }}</strong></p>
+
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-success">Confirmar Abertura do Caixa</button>
+    <a href="{% url 'caixa' %}" class="btn btn-secondary">Voltar</a>
+  </form>
+</div>
+{% endblock %}

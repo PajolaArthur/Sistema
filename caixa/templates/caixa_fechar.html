@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load dict_extras %}
+
+{% block conteudo %}
+
+<div class="container mt-5">
+  <h3>Fechamento de Caixa</h3>
+  <hr class="my-4">
+  <p><strong>Usuário:</strong> {{ request.user.username }}</p>
+  <p><strong>Abertura:</strong> {{ caixa.abertura_caixa|date:"d/m/Y H:i" }}</p>
+
+  <hr class="my-4">
+
+  {% if formas_agrupadas %}
+  <h5 class="mt-4 mb-3"><i class="bi bi-wallet2"></i> Totais por Forma de Pagamento</h5>
+  <table class="table table-hover table-bordered table-sm text-center align-middle">
+    <thead class="table-light">
+      <tr>
+        <th>Forma</th>
+        <th><i class="bi bi-arrow-down-circle text-success"></i> Suprimento</th>
+        <th><i class="bi bi-arrow-up-circle text-danger"></i> Sangria</th>
+        <th><i class="bi bi-calculator text-primary"></i> Saldo</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for forma, valores in formas_agrupadas.items %}
+        <tr>
+          <td><strong>{{ formato|get:forma }}</strong></td>
+          <td class="text-success">R$ {{ valores.suprimento|floatformat:2 }}</td>
+          <td class="text-danger">R$ {{ valores.sangria|floatformat:2 }}</td>
+          <td class="text-primary fw-bold">R$ {{ valores.saldo|floatformat:2 }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endif %}
+
+<hr class="my-4">
+
+
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Confirmar Fechamento</button>
+    <a href="{% url 'caixa' %}" class="btn btn-secondary">Cancelar</a>
+  </form>
+</div>
+
+<hr class="my-4">
+
+<a href="{% url 'fechar-caixa-pdf' %}" class="btn btn-outline-dark" target="_blank">
+  <i class="bi bi-printer"></i> Imprimir PDF
+</a>
+{% endblock %}

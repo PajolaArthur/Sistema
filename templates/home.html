@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+<body class="bg-light">
+
+    <div class="container mt-5">
+      <h1 class="text-center mb-4">Bem-vindo ao Sistema</h1>
+  
+      <div class="row justify-content-center">
+  
+        <!-- Card Compras -->
+        <div class="col-md-4 mb-3">
+          <div class="card shadow-sm text-center">
+            <div class="card-body">
+              <h5 class="card-title">Compras</h5>
+              <p class="card-text">Gerencie solicitações, fornecedores e itens adquiridos.</p>
+              <a href="{% url 'compra-list' %}" class="btn btn-primary">Acessar Compras</a>
+            </div>
+          </div>
+        </div>
+  
+        <!-- Card Caixa -->
+        <div class="col-md-4 mb-3">
+          <div class="card shadow-sm text-center">
+            <div class="card-body">
+              <h5 class="card-title">Caixa</h5>
+              <p class="card-text">Lançamentos fiscais, controle de entrada e saída de valores.</p>
+              <a href="{% url 'caixa' %}" class="btn btn-success">Acessar Caixa</a>
+            </div>
+          </div>
+        </div>
+  
+      </div>
+    </div>
+  
+  </body>
+
+{% endblock conteudo%}

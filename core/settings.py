@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -31,6 +32,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'caixa.apps.CaixaConfig',
     'controle_acesso.apps.ControleAcessoConfig',
     'compras.apps.ComprasConfig',
     'django.contrib.admin',
@@ -57,7 +59,7 @@ ROOT_URLCONF = 'core.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -127,3 +129,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_REDIRECT_URL = 'compra-list'
 LOGIN_URL = 'login'
 LOGOUT_URL = 'logout'
+
+ALLOWED_HOSTS = ['*']  # ou limite ao IP da sua máquina local se quiser
+
+# Adicione isso ao final para lidar com staticfiles se necessário
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')

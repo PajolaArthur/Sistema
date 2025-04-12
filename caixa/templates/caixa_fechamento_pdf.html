@@ -1,0 +1,61 @@
+{% load dict_extras %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Fechamento de Caixa</title>
+    <style>
+        body { font-family: sans-serif; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #444; padding: 5px; }
+        th { background-color: #eee; }
+    </style>
+</head>
+<body>
+    <h2 style="text-align: center;">Fechamento de Caixa</h2>
+
+    <p><strong>Usuário:</strong> {{ caixa.usuario.get_full_name|default:caixa.usuario.username }}</p>
+    <p><strong>Abertura:</strong> {{ caixa.abertura_caixa }}</p>
+
+    <hr style="margin-top: 10px;">
+
+    {% if formas_agrupadas %}
+<h4>Totais por Forma de Pagamento</h4>
+
+<!-- Coloque o debug fora da tabela -->
+<!--<p><strong>Debug:</strong> Tipo de formas_agrupadas: {{ formas_agrupadas|default:"N/D" }}</p>-->
+
+<table>
+    <thead>
+        <tr>
+            <th>Forma</th>
+            <th>Suprimento</th>
+            <th>Sangria</th>
+            <th>Saldo</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for forma, valores in formas_agrupadas.items %}
+        <tr>
+            <td>{{ formato|get:forma }}</td>
+            <td>R$ {{ valores.suprimento|floatformat:2 }}</td>
+            <td>R$ {{ valores.sangria|floatformat:2 }}</td>
+            <td>R$ {{ valores.saldo|floatformat:2 }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+<hr style="margin-top: 50px;">
+
+<p style="margin-top: 40px;">
+    Declaro que os dados apresentados neste relatório refletem os valores reais do fechamento de caixa no dia {{ data_hoje }}.
+</p>
+
+<p style="margin-top: 60px; text-align: center;">
+    ____________________________________________<br>
+    {{ caixa.usuario.get_full_name|default:caixa.usuario.username }}
+</p>
+</body>
+</html>
