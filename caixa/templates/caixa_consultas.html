@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+
+{% load extras %}
+{% load dict_extras %}
+{% load widget_tweaks %}
+
+{% block conteudo %}
+<div class="container">
+  <h3 class="my-4">Consulta de Movimentos</h3>
+
+  <form method="get" class="row g-3 mb-4">
+    <div class="col-md-2">
+        <label class="form-label">{{ form.data_inicio.label }}</label>
+        {% render_field form.data_inicio class="form-control" type="date" %}
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">{{ form.data_fim.label }}</label>
+        {% render_field form.data_fim class="form-control" type="date" %}
+      </div>
+  <div class="col-md-2">
+    <label class="form-label">{{ form.tipo.label }}</label>
+    {{ form.tipo|add_class:"form-select" }}
+  </div>
+  <div class="col-md-3">
+    <label class="form-label">{{ form.forma.label }}</label>
+    {{ form.forma|add_class:"form-select" }}
+  </div>
+  <div class="col-md-3">
+    <label class="form-label">{{ form.usuario.label }}</label>
+    {{ form.usuario|add_class:"form-select" }}
+  </div>
+  <div class="col-12">
+    <button type="submit" class="btn btn-primary me-2">Filtrar</button>
+    <a href="{% url 'caixa-consulta' %}" class="btn btn-outline-secondary">Limpar</a>
+  </div>
+</form>
+
+  <hr>
+
+  <h5 class="mt-4">Resumo dos Totais</h5>
+  <ul class="list-group mb-4">
+    <li class="list-group-item d-flex justify-content-between">
+      <span>💰 Total de Suprimentos:</span>
+      <strong class="text-success">R$ {{ total_suprimentos|floatformat:2 }}</strong>
+    </li>
+    <li class="list-group-item d-flex justify-content-between">
+      <span>💸 Total de Sangrias</span>
+      <strong class="text-danger">R$ {{ total_sangrias|floatformat:2 }}</strong>
+    </li>
+    <li class="list-group-item d-flex justify-content-between">
+      <span><strong>📊 Saldo Final</strong></span>
+      <strong>R$ {{ total_geral|floatformat:2 }}</strong>
+    </li>
+  </ul>
+
+  <h6>Totais por Forma de Pagamento</h6>
+  <table class="table table-bordered table-sm mb-5">
+    <thead class="table-light">
+      <tr>
+        <th>Forma</th>
+        <th>Suprimento</th>
+        <th>Sangria</th>
+        <th>Saldo</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in formas_totais %}
+      <tr>
+        <td>{{ item.forma|get_display_forma }}</td>
+        <td class="text-success">R$ {{ item.suprimento|floatformat:2 }}</td>
+        <td class="text-danger">R$ {{ item.sangria|floatformat:2 }}</td>
+        <td><strong>R$ {{ item.saldo|floatformat:2 }}</strong></td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="4">Nenhuma forma de pagamento encontrada.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  
+
+  <h5>Movimentos Encontrados</h5>
+  <table class="table table-striped table-hover">
+    <thead class="table-light">
+      <tr>
+        <th>Data</th>
+        <th>Tipo</th>
+        <th>Forma</th>
+        <th>Valor</th>
+        <th>Usuário</th>
+        <th>Observação</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for mov in movimentos %}
+      <tr class="{% if mov.tipo == 'S' %}table-success{% else %}table-danger{% endif %}">
+        <td>{{ mov.criado_em|date:"d/m/Y H:i" }}</td>
+        <td>
+            {% if mov.tipo == 'S' %}
+              <span class="text-success">{{ mov.get_tipo_display }}</span>
+            {% else %}
+              <span class="text-danger">Sangria</span>
+            {% endif %}
+          </td>
+        <td>
+            {% if mov.forma == 'DNH' %}
+                💵 Dinheiro
+              {% elif mov.forma == 'PIX' %}
+                🔁 PIX
+              {% elif mov.forma == 'CRC' %}
+                💳 Crédito
+              {% elif mov.forma == 'CRD' %}
+                💳 Débito
+              {% elif mov.forma == 'CHA' %}
+                🧾 Cheque Pré
+              {% elif mov.forma == 'CHP' %}
+                🧾 Cheque Pós
+              {% else %}
+                {{ mov.get_forma_display }}
+              {% endif %}
+        </td>
+        <td>R$ {{ mov.valor }}</td>
+        <td>{{ mov.usuario }}</td>
+        <td>{{ mov.observacao }}</td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="6">Nenhum lançamento encontrado.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

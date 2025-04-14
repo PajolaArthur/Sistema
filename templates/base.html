@@ -28,16 +28,34 @@
             <ul class="dropdown-menu">
               <li><a class="dropdown-item" href="{% url 'compra-list' %}">Listar</a></li>
               <li><a class="dropdown-item" href="{% url 'compra-create' %}">Cadastrar</a></li>
+              {% if request.user.is_staff %}
+              <!-- 
+              <li><a class="dropdown-item" href="{% url 'compra-create' %}">Fabricantes</a></li>
+              <li><a class="dropdown-item" href="{% url 'compra-create' %}">Categorias</a></li> 
+              -->
+              {% endif %}
             </ul>
           </li>
-          <!-- Link direto para Caixa -->
+          <!-- Dropdown Caixa -->
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="comprasDropdown" role="button" data-bs-toggle="dropdown">
+            <a class="nav-link dropdown-toggle" href="{% url 'home' %}" id="comprasDropdown" role="button" data-bs-toggle="dropdown">
               Caixa
             </a>
             <ul class="dropdown-menu">
               <li><a class="dropdown-item" href="{% url 'caixa' %}">Gerenciar</a></li>
-              <li><a class="dropdown-item" href="">Movimento</a></li>
+              <li><a class="dropdown-item" href="{% url 'caixa-lancamento' %}">Lançamento</a></li>
+              {% if request.user.is_staff %}
+              <li><a class="dropdown-item" href="{% url 'caixa-consulta' %}">Consultar</a></li>
+              {% endif %}
+            </ul>
+          </li>
+          <!-- Dropdown Utilitários -->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="comprasDropdown" role="button" data-bs-toggle="dropdown">
+              Utilitários
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="">Custo</a></li>
             </ul>
           </li>
         </ul>

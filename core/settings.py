@@ -32,9 +32,9 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'compras.apps.ComprasConfig',
     'caixa.apps.CaixaConfig',
     'controle_acesso.apps.ControleAcessoConfig',
-    'compras.apps.ComprasConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_filters',
+    'widget_tweaks',
 ]
 
 MIDDLEWARE = [

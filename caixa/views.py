@@ -6,40 +6,29 @@ from django.utils.timezone import make_aware, datetime
 from decimal import Decimal, InvalidOperation
 from django.utils.decorators import method_decorator
 from .models import Movimento, Caixa
-from django.utils import timezone
 from django.views.generic import ListView
 from django.db.models import Sum, Case, When, DecimalField, Value as V
 from django.db.models.functions import Coalesce
 from collections import defaultdict
 from django.template.loader import get_template
 from django.http import HttpResponse
-from collections import defaultdict
 from xhtml2pdf import pisa
-from django.template.loader import get_template
-from django.http import HttpResponse
 from io import BytesIO
-from collections import defaultdict
 from django.contrib.auth.decorators import login_required
 import pprint
-from django.template.loader import get_template
-from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
-from django.template.loader import get_template
-from django.utils import timezone
 from io import BytesIO
-from decimal import Decimal
-from collections import defaultdict
 from xhtml2pdf import pisa
 from datetime import datetime
 from .models import Caixa, Movimento
-from django.template.loader import get_template
 from django.db.models import Q
 from django.utils.decorators import method_decorator
-from django.contrib.auth.decorators import login_required
 from django.views.generic import ListView
-from django.db.models import Q
-from datetime import datetime
+from django.shortcuts import render
 from .models import Movimento
+from .forms import MovimentoConsultaForm
+from django.db.models import Sum
+from django.contrib.auth.models import User
+
 
 
 @method_decorator(login_required, name="dispatch")
@@ -77,7 +66,6 @@ class MovimentoListView(ListView):
         return queryset.filter(filtros)
     
     def get_context_data(self, **kwargs):
-            print("DEBUG CONTEXTO MOVIMENTO LIST VIEW")
             context = super().get_context_data(**kwargs)
 
             context['tipo_selecionado'] = Movimento.TIPO_MOVIMENTO
@@ -305,3 +293,72 @@ def lancar_movimento(request):
         return redirect('caixa')
 
     return render(request, 'caixa_lancamento.html', {'formas': FORMAS_PAGAMENTO})
+
+@login_required
+def caixa_consulta(request):
+    if not request.user.is_staff:
+        messages.warning(request, "Você não tem permissão para realizar consultas!")
+        return redirect('caixa')
+    if request.GET and any(param for param in request.GET.values()):
+        form = MovimentoConsultaForm(request.GET)
+    else:
+        form = MovimentoConsultaForm()
+
+    movimentos = Movimento.objects.all()
+
+    # Aplicar filtros se forem passados
+    if form.is_valid():
+        data_inicio = form.cleaned_data.get('data_inicio')
+        data_fim = form.cleaned_data.get('data_fim')
+        tipo = form.cleaned_data.get('tipo')
+        forma = form.cleaned_data.get('forma')
+        usuario = form.cleaned_data.get('usuario')
+
+        if data_inicio:
+            movimentos = movimentos.filter(criado_em__date__gte=data_inicio)
+        if data_fim:
+            movimentos = movimentos.filter(criado_em__date__lte=data_fim)
+        if tipo:
+            movimentos = movimentos.filter(tipo=tipo)
+        if forma:
+            movimentos = movimentos.filter(forma=forma)
+        if usuario:
+            movimentos = movimentos.filter(usuario=usuario)
+
+    # Totais por forma de pagamento (com separação S/E e saldo)
+    formas_agrupadas = movimentos.values('forma', 'tipo').annotate(total=Sum('valor'))
+
+    formas_totais_dict = defaultdict(lambda: {'suprimento': 0, 'sangria': 0})
+    for item in formas_agrupadas:
+        forma = item['forma']
+        tipo = item['tipo']
+        if tipo == 'S':
+            formas_totais_dict[forma]['suprimento'] += item['total']
+        elif tipo == 'E':
+            formas_totais_dict[forma]['sangria'] += item['total']
+
+    formas_totais_lista = []
+    for forma, valores in formas_totais_dict.items():
+        formas_totais_lista.append({
+            'forma': forma,
+            'suprimento': valores['suprimento'],
+            'sangria': valores['sangria'],
+            'saldo': valores['suprimento'] - valores['sangria'],
+        })
+
+    # Totais gerais
+    total_suprimentos = movimentos.filter(tipo='S').aggregate(total=Sum('valor'))['total'] or 0
+    total_sangrias = movimentos.filter(tipo='E').aggregate(total=Sum('valor'))['total'] or 0
+    total_geral = total_suprimentos - total_sangrias
+
+    # Contexto final
+    context = {
+        'form': form,
+        'movimentos': movimentos,
+        'total_suprimentos': total_suprimentos,
+        'total_sangrias': total_sangrias,
+        'total_geral': total_geral,
+        'formas_totais': formas_totais_lista,
+    }
+
+    return render(request, 'caixa_consultas.html', context)

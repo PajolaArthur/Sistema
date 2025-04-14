@@ -15,10 +15,9 @@ from django.shortcuts import get_object_or_404, redirect
 from django.utils import timezone
 from django.views.generic.edit import CreateView
 from django.views.generic import TemplateView
+from django.contrib.auth.models import User
+from django.contrib import messages
 
-#def compra_list(request):
-#    compras = Compra.objects.all()
-#    return render(request,'compra_list.html',{'compras':compras})
 
 class Home(TemplateView):
     template_name = 'home.html'
@@ -96,7 +95,8 @@ class CompraUpdateView(UpdateView):
     def form_valid(self,form):
         #adicionar lógica no que o usuário escreveu no formulário
         return super().form_valid(form)
-    
+
+   
 class CompraDeleteView(DeleteView):
     model = Compra
     template_name = 'compra_delete.html'
@@ -110,20 +110,32 @@ class CompraCreateView(CreateView):
     def form_valid(self, form):
         form.instance.criado_por = self.request.user
         return super().form_valid(form)
-    
+
+@login_required
 def aprovar_compra(request, pk):
+    if not request.user.is_staff:
+        messages.warning(request, "Você não tem permissão para realizar consultas!")
+        return redirect('caixa')
     compra = get_object_or_404(Compra, pk=pk)
     compra.situacao = 'A'  # 'A' de Aprovado
     compra.save()
     return redirect('compra-list')  # redireciona de volta para a listagem
 
+@login_required
 def recusar_compra(request, pk):
+    if not request.user.is_staff:
+        messages.warning(request, "Você não tem permissão para realizar consultas!")
+        return redirect('caixa')
     compra = get_object_or_404(Compra, pk=pk)
     compra.situacao = 'R'  # 'R' de Recusado
     compra.save()
     return redirect('compra-list')  # redireciona de volta para a listagem
 
+@login_required
 def excluir_compra(request, pk):
+    if not request.user.is_staff:
+        messages.warning(request, "Você não tem permissão para realizar consultas!")
+        return redirect('caixa')
     compra = get_object_or_404(Compra, pk=pk)
     compra.excluido_em = timezone.now()
     compra.save()
