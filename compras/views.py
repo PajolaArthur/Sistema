@@ -30,7 +30,7 @@ class CompraListView(ListView):
     context_object_name = 'compras'
 
     def get_queryset(self):
-        queryset = super().get_queryset()
+        queryset = super().get_queryset().filter(excluido_em__isnull=True)
 
         compras = self.request.GET.get('q', '').strip()
         codigoproduto = self.request.GET.get('codigoproduto', '').strip()
@@ -114,7 +114,7 @@ class CompraCreateView(CreateView):
 @login_required
 def aprovar_compra(request, pk):
     if not request.user.is_staff:
-        messages.warning(request, "Você não tem permissão para realizar consultas!")
+        messages.warning(request, "Você não tem permissão para aprovar as solicitações de compras!")
         return redirect('caixa')
     compra = get_object_or_404(Compra, pk=pk)
     compra.situacao = 'A'  # 'A' de Aprovado
@@ -124,7 +124,7 @@ def aprovar_compra(request, pk):
 @login_required
 def recusar_compra(request, pk):
     if not request.user.is_staff:
-        messages.warning(request, "Você não tem permissão para realizar consultas!")
+        messages.warning(request, "Você não tem permissão para recusar as solicitações de compras!")
         return redirect('caixa')
     compra = get_object_or_404(Compra, pk=pk)
     compra.situacao = 'R'  # 'R' de Recusado
@@ -134,8 +134,8 @@ def recusar_compra(request, pk):
 @login_required
 def excluir_compra(request, pk):
     if not request.user.is_staff:
-        messages.warning(request, "Você não tem permissão para realizar consultas!")
-        return redirect('caixa')
+        messages.warning(request, "Você não tem permissão para excluir solicitações de compras!")
+        return redirect('compra-list')
     compra = get_object_or_404(Compra, pk=pk)
     compra.excluido_em = timezone.now()
     compra.save()
