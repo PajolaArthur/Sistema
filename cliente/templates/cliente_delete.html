@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block conteudo %}
+<div class="card">
+  <div class="card-body">
+    <h3 class="card-title text-danger">⚠️ Confirmar exclusão definitiva</h3>
+    <p class="card-text">
+      Você está prestes a <strong>DELETAR PERMANENTEMENTE</strong> o cliente abaixo. Esta ação não poderá ser desfeita.
+    </p>
+
+    <ul class="list-group mb-3">
+      <li class="list-group-item"><strong>Nome/Razão:</strong> {{ object.nome_razao }}</li>
+      <li class="list-group-item"><strong>CPF/CNPJ:</strong> {{ object.cpf_cnpj }}</li>
+      <li class="list-group-item"><strong>Tipo Pessoa:</strong> {{ object.get_tipo_pessoa_display }}</li>
+      <li class="list-group-item"><strong>Email:</strong> {{ object.email|default:"------" }}</li>
+      <li class="list-group-item"><strong>Telefone:</strong> {{ object.telefone|default:"------" }}</li>
+      <li class="list-group-item"><strong>Celular:</strong> {{ object.celular|default:"------" }}</li>
+      <li class="list-group-item"><strong>Endereço:</strong> 
+        {{ object.logradouro|default:"" }} Nº {{ object.numero|default:"S/N" }},
+        {{ object.bairro|default:"" }}, {{ object.municipio|default:"" }} - {{ object.uf|default:"" }},
+        CEP {{ object.cep|default:"------" }}
+      </li>
+      <li class="list-group-item"><strong>Observações:</strong> {{ object.observacoes|default:"------" }}</li>
+    </ul>
+
+    <form method="post">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-danger">🗑️ Confirmar Deleção</button>
+      <a href="{% url 'cliente-list' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -1,22 +1,46 @@
 {% extends "base.html" %}
+{% load widget_tweaks %}
 
 {% block conteudo %}
-    <h1>Login</h1>   
-    {% if forms.errors %} 
-    <p> usuário ou senha incorretos, por favor insira credenciais válidas!</p>
-    {% else %}
-    <p>Faça Login para acessar!</p>
 
-    {% endif %}
-    <div class="login-form">
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+    <div class="card shadow p-4 border-0" style="max-width: 400px; width: 100%;">
+        <div class="card-body text-center">
 
-    <form action="{% url 'login' %}" method="post">
+            <i class="bi bi-person-circle display-1 text-primary mb-3"></i>
 
-        {% csrf_token %}
-        {{form.as_p}}
+            <h3 class="card-title mb-3">Acesso ao Sistema</h3>
 
-        <input type="hidden" name="next" value="{{next}}">
-        <p><input type=submit value="Login"></p>
+            {% if form.errors %}
+                <div class="alert alert-danger" role="alert">
+                    Usuário ou senha incorretos.<br> Por favor, tente novamente!
+                </div>
+            {% else %}
+                <p class="text-muted">Informe suas credenciais para acessar.</p>
+            {% endif %}
 
-    </form>
-{% endblock conteudo%}
+            <form action="{% url 'login' %}" method="post" class="text-start">
+                {% csrf_token %}
+
+                <div class="mb-3">
+                    <label for="id_username" class="form-label">Usuário</label>
+                    {{ form.username|add_class:"form-control" }}
+                </div>
+
+                <div class="mb-3">
+                    <label for="id_password" class="form-label">Senha</label>
+                    {{ form.password|add_class:"form-control" }}
+                </div>
+
+                <input type="hidden" name="next" value="{{ next }}">
+
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary">Entrar</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+{% endblock conteudo %}

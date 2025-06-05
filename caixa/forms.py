@@ -1,5 +1,5 @@
 from django import forms
-from .models import Movimento
+from .models import Movimento, Formapagamento
 from django.utils import timezone
 from django.contrib.auth.models import User
 
@@ -21,14 +21,24 @@ class MovimentoConsultaForm(forms.Form):
         choices=[('', 'Todos')] + list(Movimento.TIPO_MOVIMENTO),
         required=False
     )
-    forma = forms.ChoiceField(
-        label='Forma de Pagamento',
-        choices=[('', 'Todas')] + list(Movimento.FORMAS_PAGAMENTO),
-        required=False
+
+    forma = forms.ModelChoiceField(
+        label="Forma de Pagamento",
+        queryset=Formapagamento.objects.all(),
+        required=False,
+        empty_label='Todos'
+        
     )
+
     usuario = forms.ModelChoiceField(
         label='Usuário',
         queryset=User.objects.all(),
         required=False,
         empty_label='Todos'
     )
+
+class FormapagamentoForm(forms.ModelForm):
+    class Meta:
+        model = Formapagamento
+        fields = ['forma', 'sigla','icone']
+

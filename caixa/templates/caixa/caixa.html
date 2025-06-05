@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+
+{% block conteudo %}
+
+<div class="container mt-5">
+
+  <!-- Cabeçalho -->
+  <div class="d-flex justify-content-center flex-column align-items-center mb-4">
+    <h2 class="mb-1">Gerenciamento de Caixa</h2>
+    <p class="mb-0 text-center">Controle eficiente dos suprimentos, sangrias e saldo do caixa</p>
+  </div>
+
+  <!-- Botões de ação -->
+  <div class="d-flex justify-content-center gap-2 mb-4">
+    <a href="{% url 'caixa-abrir' %}" class="btn btn-outline-success">🟢 Abrir Caixa</a>
+    <a href="{% url 'caixa-fechar' %}" class="btn btn-outline-danger">🔴 Fechar Caixa</a>
+    <a href="{% url 'caixa-lancamento' %}" class="btn btn-outline-primary">✏️ Lançar Movimento</a>
+  </div>
+
+  <hr>
+
+  <!-- Filtros -->
+  <form method="get" class="row g-3 align-items-end mb-4">
+    <div class="col-md-4">
+      <label for="q" class="form-label">Buscar</label>
+      <input type="text" id="q" name="q" class="form-control" placeholder="Buscar" value="{{ request.GET.q }}">
+    </div>
+
+    <div class="col-md-3">
+      <label for="tipo" class="form-label">Tipo</label>
+      <select id="tipo" name="tipo" class="form-select">
+        <option value="">Todos os Tipos</option>
+        {% for codigo, label in tipo_selecionado %}
+          <option value="{{ codigo }}" {% if codigo == tipo %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="col-md-3">
+      <label for="forma" class="form-label">Forma</label>
+      <select id="forma" name="forma" class="form-select">
+        <option value="">Todas as Formas</option>
+        {% for codigo, label in forma_selecionada %}
+          <option value="{{ codigo }}" {% if codigo == forma %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="col-md-2 d-flex gap-2">
+      <button type="submit" class="btn btn-primary w-100">🔍 Filtrar</button>
+      <a href="{% url 'caixa' %}" class="btn btn-secondary w-100">❌ Limpar</a>
+    </div>
+  </form>
+
+  <hr>
+  <!-- Controles para ajustar o tamanho da tabela -->
+  <div class="mb-3 d-flex gap-2 align-items-center">
+    <button id="btn-aumentar" class="btn btn-sm btn-outline-secondary" type="button">Aumentar Tabela 🔍+</button>
+    <button id="btn-diminuir" class="btn btn-sm btn-outline-secondary" type="button">Diminuir Tabela 🔍-</button>
+    <small class="text-muted ms-3">Ajuste o tamanho da tabela para seu monitor</small>
+  </div>
+
+  <!-- Contador de lançamentos -->
+  <span class="badge bg-info fs-6 mb-3">
+    🔢 {{ movimentos|length }} Lançamentos encontrados
+  </span>
+  <hr>
+  <!-- Totais -->
+  {% if movimentos %}
+  <div class="row mb-4 g-3">
+    <div class="col-md-4">
+      <div class="alert alert-success text-center mb-0">💰 Suprimentos: R$ {{ total_suprimentos|floatformat:2 }}</div>
+    </div>
+    <div class="col-md-4">
+      <div class="alert alert-danger text-center mb-0">💸 Sangrias: R$ {{ total_sangrias|floatformat:2 }}</div>
+    </div>
+    <div class="col-md-4">
+      <div class="alert alert-primary text-center mb-0">📊 Saldo: R$ {{ saldo|floatformat:2 }}</div>
+    </div>
+  </div>
+  <hr>
+  <!-- Tabela de lançamentos -->
+  <div class="table-responsive">
+    <table class="table table-striped table-hover align-middle">
+      <thead class="table-light">
+        <tr>
+          <th>Data</th>
+          <th>Tipo</th>
+          <th>Forma</th>
+          <th class="text-end">Valor</th>
+          <th>Observação</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for mov in movimentos %}
+        <tr class="{% if mov.tipo == 'S' %}table-success{% else %}table-danger{% endif %}">
+          <td>{{ mov.criado_em|date:"d/m/Y H:i" }}</td>
+          <td>
+            {% if mov.tipo == 'S' %}
+              <span class="text-success">{{ mov.get_tipo_display }}</span>
+            {% else %}
+              <span class="text-danger">Sangria</span>
+            {% endif %}
+          </td>
+          <td>{{ mov.forma.icone }} {{ mov.forma.forma }}</td>
+          <td class="text-end">R$ {{ mov.valor|floatformat:2 }}</td>
+          <td>{{ mov.observacao }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p class="text-muted mt-4 text-center">Nenhum lançamento realizado neste caixa.</p>
+  {% endif %}
+
+</div>
+
+{% endblock conteudo %}

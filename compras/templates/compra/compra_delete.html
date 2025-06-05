@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+<div class="card">
+  <div class="card-body">
+    <h3 class="card-title text-danger">⚠️ Confirmar exclusão definitiva</h3>
+    <p class="card-text">
+      Você está prestes a <strong>DELETAR PERMANENTEMENTE</strong> a solicitação de compra abaixo. Esta ação não poderá ser desfeita.
+    </p>
+
+    <ul class="list-group mb-3">
+      <li class="list-group-item"><strong>Descrição Produto:</strong> {{ object.descricao_produto }}</li>
+      <li class="list-group-item"><strong>Código Produto:</strong> {{ object.codigo_produto }}</li>
+      <li class="list-group-item"><strong>Código Fornecedor:</strong> {{ object.codigo_fornecedor|default:"------" }}</li>
+      <li class="list-group-item"><strong>Fabricante:</strong> {{ object.fabricante_produto|default:"------" }}</li>
+      <li class="list-group-item"><strong>Categoria:</strong> {{ object.categoria_produto|default:"------" }}</li>
+      <li class="list-group-item"><strong>Situação:</strong> {{ object.get_situacao_display }}</li>
+      <li class="list-group-item"><strong>Criado por:</strong> {{ object.criado_por|default:"------" }}</li>
+      <li class="list-group-item"><strong>Criado em:</strong> {{ object.criado_em|date:"d/m/Y H:i" }}</li>
+      {% if object.excluido_por %}
+      <li class="list-group-item"><strong>Excluído por:</strong> {{ object.excluido_por }}</li>
+      <li class="list-group-item"><strong>Excluído em:</strong> {{ object.excluido_em|date:"d/m/Y H:i" }}</li>
+      {% endif %}
+    </ul>
+
+    <form method="post">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-danger">
+        🗑️ Confirmar Deleção
+      </button>
+      <a href="{% url 'compra-list' %}" class="btn btn-secondary">
+        Cancelar
+      </a>
+    </form>
+  </div>
+</div>
+{% endblock %}

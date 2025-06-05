@@ -40,12 +40,12 @@
 
     <div class="mb-3">
       <label for="forma" class="form-label">Forma de Pagamento</label>
-      <select name="forma" id="forma" class="form-select form-select-sm w-50" required>
-        <option value="" selected disabled>Selecione a forma</option>
-        {% for codigo, descricao in formas %}
-          <option value="{{ codigo }}">{{ descricao }}</option>
-        {% endfor %}
-      </select>
+      <select name="forma" id="forma" class="form-control" required>
+    <option value="">Selecione</option>
+    {% for forma in formas %}
+        <option value="{{ forma.id }}">{{ forma.forma }}</option>
+    {% endfor %}
+    </select>
     </div>
 
     <div class="mb-4">

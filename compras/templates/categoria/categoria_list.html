@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+<hr>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">Lista de Categorias</h2>
+    <a href="{% url 'categoria-create' %}" class="btn btn-success">
+        ➕ Cadastrar Categoria
+    </a>
+</div>
+<hr>
+<form method="get" class="row g-3 align-items-end mb-4">
+    <div class="col-md-4">
+        <label for="busca_nome" class="form-label">Buscar por Nome</label>
+        <input type="text" id="busca_nome" name="busca_nome" class="form-control"
+               placeholder="Nome da categoria" value="{{ busca_nome }}">
+    </div>
+    <div class="col-md-3">
+        <label for="busca_sigla" class="form-label">Buscar por Sigla</label>
+        <input type="text" id="busca_sigla" name="busca_sigla" class="form-control"
+               placeholder="Sigla" value="{{ busca_sigla }}">
+    </div>
+    <div class="col-md-5 d-flex gap-2">
+        <button type="submit" class="btn btn-primary">
+            🔍 Buscar
+        </button>
+        <a href="{% url 'categoria-list' %}" class="btn btn-outline-secondary">
+            ❌ Limpar
+        </a>
+    </div>
+</form>
+<hr>
+<!-- Controles para ajuste do tamanho da tabela -->
+<div class="mb-3 d-flex gap-2 align-items-center">
+    <button id="btn-aumentar" class="btn btn-sm btn-outline-secondary" type="button">
+        Aumentar Tabela 🔍+
+    </button>
+    <button id="btn-diminuir" class="btn btn-sm btn-outline-secondary" type="button">
+        Diminuir Tabela 🔍-
+    </button>
+    <small class="text-muted ms-3">Ajuste o tamanho da tabela conforme seu monitor</small>
+</div>
+<span class="badge bg-success fs-6">
+    🔢 {{categorias|length}} Solicitações encontradas
+</span>
+<hr>
+
+<div class="table-responsive">
+    <table class="table table-hover table-bordered align-middle">
+        <thead class="table-light">
+            <tr>
+                <th class="text-center" style="width: 100px;">Sigla</th>
+                <th>Nome</th>
+                <th class="text-center" style="width: 180px;">Criado em</th>
+                <th class="text-center" style="width: 160px;">Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for categoria in categorias %}
+            <tr>
+                <td class="text-center">{{ categoria.sigla }}</td>
+                <td>{{ categoria.nome }}</td>
+                <td class="text-center">{{ categoria.criado_em|date:"d/m/Y H:i" }}</td>
+                <td class="text-center">
+                    <div class="d-flex justify-content-center gap-2">
+                        <a href="{% url 'categoria-edit' categoria.pk %}" class="btn btn-sm btn-primary">
+                            ✏️ Editar
+                        </a>
+                        <a href="{% url 'categoria-delete' categoria.pk %}" class="btn btn-sm btn-danger"
+                           onclick="return confirm('Tem certeza que deseja excluir esta categoria?');">
+                            🗑️ Excluir
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4" class="text-center">Nenhuma categoria cadastrada.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

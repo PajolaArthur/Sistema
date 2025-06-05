@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+
+<h1>{% if object %}Editar{% else %}Cadastrar{% endif %} Fabricante</h1>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Cadastrar</button>
+</form>
+
+<br>
+    <a href="{% url 'fabricante-list' %}" class="btn btn-warning">Cancelar</a>
+
+{% endblock conteudo%}

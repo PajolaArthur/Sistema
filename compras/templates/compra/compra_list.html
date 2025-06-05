@@ -1,0 +1,207 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+<hr>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">Solicitações de Compras</h2>
+    <div class="d-flex gap-2">
+        <a href="{% url 'compra-create' %}" class="btn btn-success">
+            ➕ Nova Compra
+        </a>
+        <a href="{% url 'compras-pdf' %}?{{ request.GET.urlencode }}" target="_blank" class="btn btn-outline-primary">
+            📄 PDF
+        </a>
+    </div>
+</div>
+<hr>
+
+<form method="get" action="{% url 'compra-list' %}" class="row g-3 align-items-end mb-4">
+    <div class="col-md-3">
+        <label for="q" class="form-label">Pesquisa Geral</label>
+        <input type="text" id="q" name="q" class="form-control"
+               placeholder="Pesquisa Geral..." value="{{ request.GET.q }}">
+    </div>
+
+    <div class="col-md-3">
+        <label for="codigoproduto" class="form-label">Código do Produto</label>
+        <input type="text" id="codigoproduto" name="codigoproduto"
+               class="form-control" placeholder="Informe o Código"
+               value="{{ request.GET.codigoproduto }}">
+    </div>
+
+    <div class="col-md-3">
+        <label for="situacao" class="form-label">Situação</label>
+        <select name="situacao" id="situacao" class="form-select">
+            <option value="">Todas</option>
+            {% for key, label in compra.COMPRA_STATUS %}
+                <option value="{{ key }}" {% if request.GET.situacao == key %}selected{% endif %}>
+                    {{ label }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="col-md-3">
+        <label for="fabricante" class="form-label">Fabricante</label>
+        <select name="fabricante" id="fabricante" class="form-select">
+            <option value="">Todos</option>
+            {% for fabricante in fabricantes %}
+                <option value="{{ fabricante.id }}" {% if request.GET.fabricante == fabricante.id|stringformat:"s" %}selected{% endif %}>
+                    {{ fabricante.nome }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="col-md-3">
+        <label for="categoria" class="form-label">Categoria</label>
+        <select name="categoria" id="categoria" class="form-select">
+            <option value="">Todas</option>
+            {% for categoria in categorias %}
+                <option value="{{ categoria.id }}" {% if request.GET.categoria == categoria.id|stringformat:"s" %}selected{% endif %}>
+                    {{ categoria.nome }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="col-md-3">
+        <label for="data_inicial" class="form-label">De:</label>
+        <input type="date" id="data_inicial" name="data_inicial"
+               class="form-control" value="{{ request.GET.data_inicial }}">
+    </div>
+
+    <div class="col-md-3">
+        <label for="data_final" class="form-label">Até:</label>
+        <input type="date" id="data_final" name="data_final"
+               class="form-control" value="{{ request.GET.data_final }}">
+    </div>
+
+    <div class="col-md-3 d-flex gap-2">
+        <button type="submit" class="btn btn-primary">🔍 Filtrar</button>
+        <a href="{% url 'compra-list' %}" class="btn btn-outline-secondary">❌ Limpar</a>
+    </div>
+</form>
+<hr>
+<!-- Controles para ajustar o tamanho da tabela -->
+<div class="mb-3 d-flex gap-2 align-items-center">
+  <button id="btn-aumentar" class="btn btn-sm btn-outline-secondary" type="button">Aumentar Tabela 🔍+</button>
+  <button id="btn-diminuir" class="btn btn-sm btn-outline-secondary" type="button">Diminuir Tabela 🔍-</button>
+  <small class="text-muted ms-3">Ajuste o tamanho da tabela para seu monitor</small>
+</div>
+
+<span class="badge bg-success fs-6">
+    🔢 {{compras|length}} Solicitações encontradas
+</span>
+<hr>
+{% if compras %}
+<div class="table-responsive">
+    <table class="table table-bordered table-hover align-middle">
+        <thead class="table-light">
+            <tr>
+                <th>ID</th>
+                <th>Produto</th>
+                <th>Cód. Produto</th>
+                <th>Cód. Fornecedor</th>
+                <th>Fabricante</th>
+                <th>Categoria</th>
+                <th>Criado</th>
+                <th>Dias</th>
+                <th>Usuário</th>
+                <th>Situação</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for compra in compras %}
+                <tr>
+                    <td>{{ compra.pk }}</td>
+                    <td>{{ compra.descricao_produto }}</td>
+                    <td>{{ compra.codigo_produto }}</td>
+                    <td class="text-center">
+                        {% if compra.codigo_fornecedor %}
+                            {{ compra.codigo_fornecedor }}
+                        {% else %}
+                            ----
+                        {% endif %}
+                    </td>
+                    <td>{{ compra.fabricante_produto.sigla }}</td>
+                    <td>{{ compra.categoria_produto.nome }}</td>
+                    <td class="text-center">{{ compra.criado_em|date:"d/m/Y" }}</td>
+                    <td>
+                        {{ compra.dias_desde_criacao }} {{ compra.dias_desde_criacao|pluralize:"dia,dias" }}
+                    </td>
+                    <td>{{ compra.criado_por.username }}</td>
+                    <td class="text-center">
+                        {% if compra.situacao == 'P' %}
+                            <span class="badge bg-primary">Pendente</span>
+                        {% elif compra.situacao == 'A' %}
+                            <span class="badge bg-success">Aprovado</span>
+                        {% elif compra.situacao == 'R' %}
+                            <span class="badge bg-danger">Recusado</span>
+                        {% elif compra.situacao == 'C' %}
+                            <span class="badge bg-secondary">Concluído</span>
+                        {% endif %}
+                    </td>
+                    <td class="d-flex gap-1">
+                        <!-- Aprovar -->
+                        <a href="{% url 'compra-aprovado' pk=compra.pk %}" class="btn btn-light btn-sm"
+                        title="Aprovar" onclick="return confirm('Deseja aprovar esta compra?')">
+                            ✅
+                        </a>
+
+                        <!-- Recusar -->
+                        <a href="{% url 'compra-recusado' pk=compra.pk %}" class="btn btn-light btn-sm"
+                        title="Recusar" onclick="return confirm('Deseja recusar esta compra?')">
+                            ❌
+                        </a>
+
+                        <!-- Editar -->
+                        <a href="{% url 'compra-edit' pk=compra.pk %}" class="btn btn-primary btn-sm" title="Editar">
+                            ✏️
+                        </a>
+
+                        <!-- Excluir (baixa lógica) -->
+                        <a href="{% url 'compra-excluir' pk=compra.pk %}" class="btn btn-danger btn-sm"
+                        title="Excluir" onclick="return confirm('Tem certeza que deseja excluir esta compra?')">
+                            🗑️
+                        </a>
+
+                        <!-- Deletar (remoção definitiva) -->
+                        <a href="{% url 'compra-delete' pk=compra.pk %}" class="btn btn-dark btn-sm"
+                        title="Deletar Permanentemente">
+                            🗑️
+                        </a>
+                    </td>
+
+
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% if is_paginated %}
+<div class="d-flex justify-content-between align-items-center">
+    {% if page_obj.has_previous %}
+        <a href="?{{ request.GET.urlencode }}&page={{ page_obj.previous_page_number }}"
+           class="btn btn-outline-primary btn-sm">
+            ⬅️ Anterior
+        </a>
+    {% endif %}
+
+    <span>Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+
+    {% if page_obj.has_next %}
+        <a href="?{{ request.GET.urlencode }}&page={{ page_obj.next_page_number }}"
+           class="btn btn-outline-primary btn-sm">
+            Próxima ➡️
+        </a>
+    {% endif %}
+</div>
+{% endif %}
+
+{% else %}
+<p class="text-center">Nenhuma compra encontrada.</p>
+{% endif %}
+{% endblock conteudo %}

@@ -1,6 +1,25 @@
 {% extends "base.html" %}
 
 {% block conteudo %}
-    <h1>Sessão encerrada!</h1>
-    <a href="{% url "login" %}">Acessar novamente</a>
-{% endblock conteudo%}
+
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+    <div class="card shadow p-4 border-0 text-center" style="max-width: 400px; width: 100%;">
+        <div class="card-body">
+
+            <i class="bi bi-door-closed-fill display-1 text-danger mb-3"></i>
+
+            <h3 class="card-title mb-3">Sessão encerrada</h3>
+
+            <p class="text-muted mb-4">
+                Você saiu do sistema com sucesso.
+            </p>
+
+            <a href="{% url 'login' %}" class="btn btn-primary w-100">
+                <i class="bi bi-box-arrow-in-right me-1"></i> Acessar novamente
+            </a>
+
+        </div>
+    </div>
+</div>
+
+{% endblock conteudo %}

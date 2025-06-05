@@ -23,9 +23,6 @@
     {% if formas_agrupadas %}
 <h4>Totais por Forma de Pagamento</h4>
 
-<!-- Coloque o debug fora da tabela -->
-<!--<p><strong>Debug:</strong> Tipo de formas_agrupadas: {{ formas_agrupadas|default:"N/D" }}</p>-->
-
 <table>
     <thead>
         <tr>
@@ -36,13 +33,15 @@
         </tr>
     </thead>
     <tbody>
-    {% for forma, valores in formas_agrupadas.items %}
-        <tr>
-            <td>{{ formato|get:forma }}</td>
-            <td>R$ {{ valores.suprimento|floatformat:2 }}</td>
-            <td>R$ {{ valores.sangria|floatformat:2 }}</td>
-            <td>R$ {{ valores.saldo|floatformat:2 }}</td>
-        </tr>
+   {% for forma_id, valores in formas_agrupadas.items %}
+    {% with forma=mapa_formas|get:forma_id %}
+    <tr>
+        <td><strong>{{ forma.icone|default:'' }} {{ forma.forma }}</strong></td>
+        <td>R$ {{ valores.suprimento|floatformat:2 }}</td>
+        <td>R$ {{ valores.sangria|floatformat:2 }}</td>
+        <td><strong>R$ {{ valores.saldo|floatformat:2 }}</strong></td>
+    </tr>
+        {% endwith %}
     {% endfor %}
     </tbody>
 </table>

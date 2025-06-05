@@ -24,13 +24,16 @@
     </thead>
     <tbody>
       {% for forma, valores in formas_agrupadas.items %}
-        <tr>
-          <td><strong>{{ formato|get:forma }}</strong></td>
-          <td class="text-success">R$ {{ valores.suprimento|floatformat:2 }}</td>
-          <td class="text-danger">R$ {{ valores.sangria|floatformat:2 }}</td>
-          <td class="text-primary fw-bold">R$ {{ valores.saldo|floatformat:2 }}</td>
-        </tr>
+        {% with forma_obj=mapa_formas|get:forma %}
+          <tr>
+            <td><strong>{{ forma_obj.icone|default:'' }} {{ forma_obj.forma }}</strong></td>
+            <td class="text-success">R$ {{ valores.suprimento|floatformat:2 }}</td>
+            <td class="text-danger">R$ {{ valores.sangria|floatformat:2 }}</td>
+            <td class="text-primary fw-bold">R$ {{ valores.saldo|floatformat:2 }}</td>
+          </tr>
+        {% endwith %}
       {% endfor %}
+
     </tbody>
   </table>
 {% endif %}

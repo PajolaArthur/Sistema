@@ -1,69 +1,303 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Sistema</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet" />
+    <link
+    
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7"
+      crossorigin="anonymous"
+    />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+    <style>
+      /* Texto dos cards - tema claro */
+      .card-glass .card-title,
+      .card-glass .card-text {
+        color: #212529;
+      }
+
+      /* Texto dos cards - tema escuro */
+      body.dark-theme .card-glass .card-title,
+      body.dark-theme .card-glass .card-text {
+        color: #e0e0e0;
+      }
+
+      .card-glass {
+        background-color: rgba(255, 255, 255, 0.2);
+      }
+
+      body.dark-theme .card-glass {
+        background-color: rgba(30, 30, 30, 0.5);
+      }
+
+          /* -------------------------------
+                Glassmorphism
+            ---------------------------------*/
+
+      .card-glass {
+        backdrop-filter: blur(12px) saturate(160%);
+        -webkit-backdrop-filter: blur(12px) saturate(160%);
+        background-color: rgba(255, 255, 255, 0.15);
+        border-radius: 1rem;
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        transition: transform 0.3s ease, background-color 0.3s ease;
+      }
+
+      .card-glass:hover {
+        transform: scale(1.03);
+        background-color: rgba(255, 255, 255, 0.25);
+      }
+
+      /* Suporte para tema escuro */
+      body.dark-theme .card-glass {
+        background-color: rgba(30, 30, 30, 0.4);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+      }
+
+      body.dark-theme .card-glass:hover {
+        background-color: rgba(30, 30, 30, 0.6);
+      }
+
+          .botao-menu {
+      min-width: 160px;
+      padding: 14px 24px;
+      font-size: 1rem;
+      text-align: center;
+      border-radius: 1rem;
+      backdrop-filter: blur(8px) saturate(180%);
+      -webkit-backdrop-filter: blur(8px) saturate(180%);
+      background-color: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: #fff;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+      transition: transform 0.2s ease, background-color 0.3s ease;
+    }
+
+    .botao-menu:hover {
+      transform: scale(1.05);
+      background-color: rgba(255, 255, 255, 0.25);
+      color: #fff;
+      text-decoration: none;
+    }
+
+    body.dark-theme .botao-menu {
+      background-color: rgba(30, 30, 30, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #e0e0e0;
+    }
+
+    body.dark-theme .botao-menu:hover {
+      background-color: rgba(30, 30, 30, 0.6);
+      color: #fff;
+    }
+    
+    /* -------------------------------
+      Estilo geral da tabela 
+    ---------------------------------*/
+
+    table {
+      width: 100%;
+    }
+
+    th, td {
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+
+    th {
+      font-size: 0.9rem;
+    }
+
+    td {
+      font-size: 0.9rem;
+    }
+
+    /* -------------------------------
+      Ajuste para coluna de ações 
+    ---------------------------------*/
+
+    td.acoes {
+      min-width: 130px;
+    }
+
+    td.acoes .btn {
+      margin: 0 2px;
+      padding: 4px 6px;
+    }
+
+    /* -------------------------------
+      Tamanhos da tabela
+    ---------------------------------*/
+
+    .tabela-pequena td, .tabela-pequena th {
+      font-size: 0.75rem;
+      padding: 0.3rem;
+    }
+
+    .tabela-media td, .tabela-media th {
+      font-size: 0.9rem;
+      padding: 0.5rem;
+    }
+
+    .tabela-grande td, .tabela-grande th {
+      font-size: 1.05rem;
+      padding: 0.65rem;
+    }
+
+    /* -------------------------------
+      Tema escuro
+    ---------------------------------*/
+
+    body.dark-theme {
+      background-color: #121212;
+      color: #e0e0e0;
+    }
+
+    body.dark-theme .navbar,
+    body.dark-theme .bg-light {
+      background-color: #1f1f1f !important;
+    }
+
+    body.dark-theme table {
+      color: #e0e0e0;
+    }
+
+    body.dark-theme table.table {
+      background-color: #2a2a2a;
+      border-color: #444;
+    }
+
+    body.dark-theme table.table thead th {
+      background-color: #333;
+      color: #eee;
+      border-color: #555;
+    }
+
+    body.dark-theme table.table tbody tr:nth-of-type(odd) {
+      background-color: #2a2a2a;
+    }
+
+    body.dark-theme table.table tbody tr:nth-of-type(even) {
+      background-color: #1c1c1c;
+    }
+
+    body.dark-theme table.table tbody tr:hover {
+      background-color: #3a3a3a;
+      color: #fff;
+    }
+
+    body.dark-theme table.table th,
+    body.dark-theme table.table td {
+      border-color: #555;
+    }
+
+    /* -------------------------------
+      Texto auxiliar no tema escuro
+    ---------------------------------*/
+
+    body.dark-theme small.text-muted {
+      color: #ccc !important;
+    }
+
+    /* Classes para tamanhos da tabela */
+      table.tabela-pequena td, table.tabela-pequena th {
+        font-size: 0.75rem;
+        padding: 0.25rem 0.5rem;
+      }
+      table.tabela-media td, table.tabela-media th {
+        font-size: 0.9rem;
+        padding: 0.4rem 0.7rem;
+      }
+      table.tabela-grande td, table.tabela-grande th {
+        font-size: 1.1rem;
+        padding: 0.6rem 1rem;
+      }
+
+</style>
+
   </head>
   <body class="d-flex flex-column min-vh-100">
-      <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="{% url 'home' %}">Sistema</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-        <span class="navbar-toggler-icon"></span>
-      </button>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="{% url 'home' %}">Sistema</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+          <span class="navbar-toggler-icon"></span>
+        </button>
 
-      <div class="collapse navbar-collapse" id="navbarNav">
-        {% if request.user.is_authenticated%}
-        <ul class="navbar-nav">
+        <div class="collapse navbar-collapse" id="navbarNav">
+          {% if request.user.is_authenticated %}
+          <ul class="navbar-nav">
+            <!-- Dropdown Compras -->
+            <li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                id="comprasDropdown"
+                role="button"
+                data-bs-toggle="dropdown"
+              >
+                Compras
+              </a>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="{% url 'compra-list' %}">Listar</a></li>
+                <li><a class="dropdown-item" href="{% url 'compra-create' %}">Cadastrar</a></li>
+                {% if request.user.is_staff %}
+                <li><a class="dropdown-item" href="{% url 'fabricante-list' %}">Fabricantes</a></li>
+                <li><a class="dropdown-item" href="{% url 'categoria-list' %}">Categorias</a></li>
+                {% endif %}
+              </ul>
+            </li>
+            <!-- Dropdown Caixa -->
+            <li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle"
+                href="{% url 'home' %}"
+                id="caixaDropdown"
+                role="button"
+                data-bs-toggle="dropdown"
+              >
+                Caixa
+              </a>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="{% url 'caixa' %}">Gerenciar</a></li>
+                <li><a class="dropdown-item" href="{% url 'caixa-lancamento' %}">Lançamento</a></li>
+                {% if request.user.is_staff %}
+                <li><a class="dropdown-item" href="{% url 'formapagamento-list' %}">Forma Pagamento</a></li>
+                <li><a class="dropdown-item" href="{% url 'caixa-consulta' %}">Consultar</a></li>
+                {% endif %}
+              </ul>
+            </li>
+            <!-- Dropdown Cliente -->
+            <li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle"
+                href="{% url 'home' %}"
+                id="clienteDropdown"
+                role="button"
+                data-bs-toggle="dropdown"
+              >
+                Cliente
+              </a>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="{% url 'cliente-list' %}">Listar</a></li>
+                <li><a class="dropdown-item" href="{% url 'cliente-create' %}">Cadastrar</a></li>
+              </ul>
+            </li>
+          </ul>
+          {% endif %}
+        </div>
 
-          <!-- Dropdown Compras -->
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="comprasDropdown" role="button" data-bs-toggle="dropdown">
-              Compras
-            </a>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="{% url 'compra-list' %}">Listar</a></li>
-              <li><a class="dropdown-item" href="{% url 'compra-create' %}">Cadastrar</a></li>
-              {% if request.user.is_staff %}
-              <!-- 
-              <li><a class="dropdown-item" href="{% url 'compra-create' %}">Fabricantes</a></li>
-              <li><a class="dropdown-item" href="{% url 'compra-create' %}">Categorias</a></li> 
-              -->
-              {% endif %}
-            </ul>
-          </li>
-          <!-- Dropdown Caixa -->
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="{% url 'home' %}" id="comprasDropdown" role="button" data-bs-toggle="dropdown">
-              Caixa
-            </a>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="{% url 'caixa' %}">Gerenciar</a></li>
-              <li><a class="dropdown-item" href="{% url 'caixa-lancamento' %}">Lançamento</a></li>
-              {% if request.user.is_staff %}
-              <li><a class="dropdown-item" href="{% url 'caixa-consulta' %}">Consultar</a></li>
-              {% endif %}
-            </ul>
-          </li>
-          <!-- Dropdown Utilitários -->
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="comprasDropdown" role="button" data-bs-toggle="dropdown">
-              Utilitários
-            </a>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="">Custo</a></li>
-            </ul>
-          </li>
-        </ul>
-        {% endif %}
-      </div>
-      <div class="mt-3 mt-lg-0">
-        {% if request.user.is_authenticated %}
-          <ul class="navbar-nav ms-auto">
+        <div class="d-flex align-items-center ms-auto">
+          {% if request.user.is_authenticated %}
+          <ul class="navbar-nav me-3">
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                 {{ request.user.username }}
@@ -78,36 +312,132 @@
               </ul>
             </li>
           </ul>
-        {% endif %}
-      </div>
-    </div>
-      </div>
-    </div>
-  </nav>
-    <main class="container mt-3">
-                {% if messages %}
-            <div class="container mt-3">
-              {% for message in messages %}
-                <div class="alert alert-{{ message.tags }}">
-                  {{ message }}
-                </div>
-              {% endfor %}
-            </div>
           {% endif %}
-        {% block conteudo %}
-        {% endblock %}
-    </main>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq" crossorigin="anonymous"></script>
+          <!-- Botão tema escuro -->
+          <button
+            id="btn-toggle-theme"
+            class="btn btn-outline-light btn-sm"
+            type="button"
+            title="Alternar tema claro/escuro"
+          >
+            <i class="bi bi-moon"></i>
+          </button>
+        </div>
+      </div>
+    </nav>
+
     <main class="container mt-3 flex-grow-1">
-    <footer class="mt-4 py-3 bg-light text-center border-top">
+      {% if messages %}
+      <div class="container mt-3">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+          {{ message }}
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+      {% block conteudo %}{% endblock %}
+    </main>
+
+    <footer class="mt-auto py-3 bg-light text-center border-top w-100">
       <div class="container">
-        <small class="text-muted">
-          &copy; {% now "Y" %} Sistema. Todos os direitos reservados.
-        </small>
+        <small class="text-muted">&copy; {% now "Y" %} Sistema. Todos os direitos reservados.</small>
       </div>
     </footer>
-  </main>
-    
 
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq"
+      crossorigin="anonymous"
+    ></script>
+
+    <script>
+      // Função debounce
+      function debounce(func, wait) {
+        let timeout;
+        return function (...args) {
+          clearTimeout(timeout);
+          timeout = setTimeout(() => func.apply(this, args), wait);
+        };
+      }
+
+      document.addEventListener('DOMContentLoaded', () => {
+        const form = document.getElementById('filtro-clientes');
+
+        if (form) {
+          const inputPesquisa = document.getElementById('q');
+          const inputNomeRazao = document.getElementById('nome_razao');
+          const inputCpfCnpj = document.getElementById('cpf_cnpj');
+
+          const debouncedSubmit = debounce(() => form.submit(), 600);
+
+          if (inputPesquisa) inputPesquisa.addEventListener('input', debouncedSubmit);
+          if (inputNomeRazao) inputNomeRazao.addEventListener('input', debouncedSubmit);
+          if (inputCpfCnpj) inputCpfCnpj.addEventListener('input', debouncedSubmit);
+        }
+      });
+    </script>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const tabela = document.querySelector('table');
+        const btnAumentar = document.getElementById('btn-aumentar');
+        const btnDiminuir = document.getElementById('btn-diminuir');
+
+        // Estado inicial
+        let tamanhoAtual = 'tabela-media';
+        if (tabela) {
+          tabela.classList.add(tamanhoAtual);
+        }
+
+        if (btnAumentar) {
+          btnAumentar.addEventListener('click', () => {
+            if (tamanhoAtual === 'tabela-pequena') {
+              tabela.classList.replace('tabela-pequena', 'tabela-media');
+              tamanhoAtual = 'tabela-media';
+            } else if (tamanhoAtual === 'tabela-media') {
+              tabela.classList.replace('tabela-media', 'tabela-grande');
+              tamanhoAtual = 'tabela-grande';
+            }
+          });
+        }
+
+        if (btnDiminuir) {
+          btnDiminuir.addEventListener('click', () => {
+            if (tamanhoAtual === 'tabela-grande') {
+              tabela.classList.replace('tabela-grande', 'tabela-media');
+              tamanhoAtual = 'tabela-media';
+            } else if (tamanhoAtual === 'tabela-media') {
+              tabela.classList.replace('tabela-media', 'tabela-pequena');
+              tamanhoAtual = 'tabela-pequena';
+            }
+          });
+        }
+      });
+    </script>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const btnToggleTheme = document.getElementById('btn-toggle-theme');
+        const body = document.body;
+
+        // Carregar tema salvo no localStorage
+        if (localStorage.getItem('tema') === 'escuro') {
+          body.classList.add('dark-theme');
+          btnToggleTheme.innerHTML = '<i class="bi bi-sun"></i>';
+        }
+
+        btnToggleTheme.addEventListener('click', () => {
+          body.classList.toggle('dark-theme');
+          if (body.classList.contains('dark-theme')) {
+            localStorage.setItem('tema', 'escuro');
+            btnToggleTheme.innerHTML = '<i class="bi bi-sun"></i>';
+          } else {
+            localStorage.setItem('tema', 'claro');
+            btnToggleTheme.innerHTML = '<i class="bi bi-moon"></i>';
+          }
+        });
+      });
+    </script>
   </body>
 </html>
